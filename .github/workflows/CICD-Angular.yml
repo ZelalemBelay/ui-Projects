@@ -1,4 +1,4 @@
-name: Build and Deploy Spring Boot App to Remote Debian Docker Host
+name: Build and Deploy Angular App to Remote Debian Docker Host
 
 on:
   workflow_dispatch:

@@ -1,8 +1,17 @@
 # Stage 1: Build
 FROM node:18-alpine AS build
 WORKDIR /app
-COPY . .
+
+# Copy package files first (important for caching and consistency)
+COPY package*.json ./
+
+# Clean install
 RUN npm ci
+
+# Copy rest of app
+COPY . .
+
+# Build the app
 RUN npm run build
 
 # Stage 2: Serve with a lightweight server

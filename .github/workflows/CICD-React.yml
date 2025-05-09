@@ -1,9 +1,12 @@
-name: Build and Deploy React APP to Remote Debian Docker Host
+name: Deploy React APP to Remote Debian Docker Host
 
 on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    paths:
+      - 'react/sample-app/**'
+      - '.github/workflows/CICD-React.yml'
 
 jobs:
   build-and-deploy:

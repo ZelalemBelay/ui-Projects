@@ -1,9 +1,12 @@
-name: Build and Deploy Angular App to Remote Debian Docker Host
+name: Angular App to Remote Debian Docker Host
 
 on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    paths:
+      - 'angular/sample-app/**'
+      - '.github/workflows/CICD-Angular.yml'                      
 
 jobs:
   build-and-deploy:

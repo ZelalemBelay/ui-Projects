@@ -27,7 +27,7 @@ jobs:
       run: docker save react-app -o react-app.tar
 
     - name: Copy image to remote server
-     run: scp -o StrictHostKeyChecking=no react-app.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/${{ secrets.REMOTE_USER }}/
+      run: scp -o StrictHostKeyChecking=no react-app.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/${{ secrets.REMOTE_USER }}/
 
     - name: Load and run container on remote server
       run: |

@@ -1,0 +1,46 @@
+name: Build and Deploy Spring Boot App to Remote Debian Docker Host
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+    - name: Build Docker image for React app
+      run: docker build -t react-app ./react/my-react-app
+
+    - name: Save React image to tar
+      run: docker save react-app -o react-app.tar
+
+    - name: Copy image to remote server
+     run: scp -o StrictHostKeyChecking=no react-app.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/${{ secrets.REMOTE_USER }}/
+
+    - name: Load and run container on remote server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+         docker load -i react-app.tar
+         docker stop react-app || true && docker rm react-app || true
+          docker run -d --name react-app -p 3000:3000 react-app
+        EOF
+
+    - name: Load image & run on remote server
+      run: |
+        ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          docker load -i /tmp/angular-app.tar
+          docker stop angular-app || true && docker rm angular-app || true
+          docker run -d --name angular-app -p 80:80 angular-app
+        EOF

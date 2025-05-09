@@ -1,18 +1,14 @@
-# Step 1: Build the React app
-FROM node:18-alpine AS builder
-
+# Stage 1: Build
+FROM node:18-alpine AS build
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN npm ci
 RUN npm run build
 
-# Step 2: Serve with Nginx
-FROM nginx:alpine
-
-COPY --from=builder /app/build /usr/share/nginx/html
-
-# Optional: Custom Nginx config (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Stage 2: Serve with a lightweight server
+FROM node:18-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=build /app/build .
+EXPOSE 3000
+CMD ["serve", "-s", ".", "-l", "3000"]

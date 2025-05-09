@@ -52,7 +52,7 @@ function App() {
     }
   };
   const handleConfirm = (employee) => {
-    fetch('http://localhost:8080/saveWorkerData', {
+    fetch('http://adeytech.duckdns.org:8080/saveWorkerData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

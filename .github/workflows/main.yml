@@ -13,10 +13,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Update working directory
-      run: |
-        cd angular/sample-app
-
     - name: Set up SSH Key
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -26,7 +22,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
 
     - name: Build Docker image
-      run: docker build -t angular-app .
+      run: docker build -t angular-app ./angular/sample-app
 
     - name: Save Docker image to tar
       run: docker save angular-app -o angular-app.tar

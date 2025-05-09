@@ -19,10 +19,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build with Maven
+    - name: Update working directory
       run: |
         cd angular/sample-app
-        mvn clean package -DskipTests
 
     - name: Set up SSH Key
       env:

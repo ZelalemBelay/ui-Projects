@@ -31,10 +31,6 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
 
-    - name: Copy Files to Remote Host
-      run: |
-        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no adey-security/target/*.jar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:app.jar
-
     - name: Build Docker image
       run: docker build -t angular-app .
 

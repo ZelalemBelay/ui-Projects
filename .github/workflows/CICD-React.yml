@@ -5,7 +5,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'react/sample-app/**'
+      - 'react/my-react-app/**'
       - '.github/workflows/CICD-React.yml'
 
 jobs:

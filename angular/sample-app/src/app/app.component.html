@@ -21,50 +21,50 @@
       <nav class="navigation">
         <ul>
           <li><a href="#" class="nav-link-lg">Home</a></li>
-          <li><a href="http://adeytech.duckdns.org:3000" class="nav-link-lg">React-APP></a></li>
+          <li><a href="http://adeytech.duckdns.org:3000" class="nav-link-lg">React-APP</a></li>
           <li><a href="#" class="nav-link-lg">Services</a></li>
-          <li><a href="#" class="nav-link-lg">Contact</a></li>
+          <li><a routerLink="/contact" class="nav-link-lg">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
+  <div class="container" *ngIf="showMainLayout">
+    <div class="content">
+      <div class="left-side">
+        <h1>{{ title }}</h1>
+        <br />
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Age</th>
+                <th>Department</th>
+                <th>Process Indicator</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of data; trackBy: trackByIndex">
+                <td>{{ item.firstName }}</td>
+                <td>{{ item.lastName }}</td>
+                <td>{{ item.age }}</td>
+                <td>{{ item.department }}</td>
 
-<main class="container">
-  <div class="content">
-    <div class="left-side">
-      <h1>{{ title }}</h1>
-      <br/>
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>FirstName</th>
-              <th>LastName</th>
-              <th>Age</th>
-              <th>Department</th>
-              <th>Process Indicator</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of data; trackBy: trackByIndex">
-              <td>{{ item.firstName }}</td>
-              <td>{{ item.lastName }}</td>
-              <td>{{ item.age }}</td>
-              <td>{{ item.department }}</td>
-
-              <td *ngIf="item.isProcessComplete">✅</td>
-              <td *ngIf="!item.isProcessComplete">❌</td>
-              <td>
-                <button *ngIf="item.isProcessComplete" class="btn btn-primary active btn-sm" (click)="onAction(item)">Withdraw</button>
-                <button *ngIf="!item.isProcessComplete" class="btn btn-error active btn-sm" (click)="onAction(item)">Re Authorize</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td *ngIf="item.isProcessComplete">✅</td>
+                <td *ngIf="!item.isProcessComplete">❌</td>
+                <td>
+                  <button *ngIf="item.isProcessComplete" class="btn btn-primary active btn-sm" (click)="onAction(item)">Withdraw</button>
+                  <button *ngIf="!item.isProcessComplete" class="btn btn-danger active btn-sm" (click)="onAction(item)">Re Authorize</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</main>
 
-<router-outlet />
+</main>
+<router-outlet></router-outlet>

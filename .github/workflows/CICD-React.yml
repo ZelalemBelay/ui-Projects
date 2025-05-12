@@ -39,11 +39,3 @@ jobs:
          docker stop react-app || true && docker rm react-app || true
           docker run -d --name react-app -p 3000:3000 react-app
         EOF
-
-    - name: Load image & run on remote server
-      run: |
-        ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
-          docker load -i /tmp/angular-app.tar
-          docker stop angular-app || true && docker rm angular-app || true
-          docker run -d --name angular-app -p 80:80 angular-app
-        EOF

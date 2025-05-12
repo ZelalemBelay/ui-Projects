@@ -52,7 +52,7 @@ function App() {
     }
   };
   const handleConfirm = (employee) => {
-    fetch('http://adeytech.duckdns.org:8080/saveWorkerData', {
+    fetch('https://www.voltacores.com/api/saveWorkerData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ function App() {
   }
 
   useEffect(() => {
-    fetch('http://34.170.111.182:8080/getData')
+    fetch('https://www.voltacores.com/api/getData')
       .then((res) => res.json())
       .then((data) => {
         setData(data);

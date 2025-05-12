@@ -19,5 +19,5 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist/sample-app/browser /usr/share/nginx/html
 
 # Optional: Expose port
-EXPOSE 4200
+EXPOSE 80
 

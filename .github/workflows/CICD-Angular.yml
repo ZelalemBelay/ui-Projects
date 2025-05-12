@@ -37,5 +37,5 @@ jobs:
         ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
           docker load -i /tmp/angular-app.tar
           docker stop angular-app || true && docker rm angular-app || true
-          docker run -d --name angular-app -p 4200:4200 angular-app
+          docker run -d --name angular-app -p 4200:80 angular-app
         EOF

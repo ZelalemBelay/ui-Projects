@@ -32,7 +32,7 @@ function Header({ searchInput, searchInput2, setSearchInput, setSearchInput2, on
             navbarScroll
           >
             <Nav.Link href="#action1">Home</Nav.Link>
-            <Nav.Link href="http://adeytech.duckdns.org/">^Angular-APP</Nav.Link>
+            <Nav.Link href="https://voltacores.com/">^Angular-APP</Nav.Link>
             <NavDropdown title="መመዝገቢያ ቦታ" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#action3">Otehr Pages</NavDropdown.Item>
               <NavDropdown.Item href="#action4">

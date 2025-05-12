@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class EmployeeService {
-  private apiUrl = 'http://34.170.111.182:8080/getData';
+  private apiUrl = 'https://www.voltacores.com/api/getData';
 
   constructor(private http: HttpClient) { }
 
@@ -15,6 +15,6 @@ export class EmployeeService {
   }
 
   saveEmployees(data: any): Observable<any> {
-    return this.http.post(`http://34.170.111.182:8080/saveWorkerData`, data);
+    return this.http.post(`https://www.voltacores.com/api/saveWorkerData`, data);
   }
 }

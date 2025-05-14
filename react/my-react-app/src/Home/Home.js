@@ -74,7 +74,7 @@ function Home({ setAppData, setFilteredData, filteredData }) {
         </thead>
         <tbody>
           {filteredData.map((item, index) => (
-            <tr key={index}>
+            <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.firstName}</td>
               <td>{item.lastName}</td>

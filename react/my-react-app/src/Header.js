@@ -6,6 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import React from 'react';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { Link } from 'react-router-dom';
 
 function Header({ searchInput, searchInput2, setSearchInput, setSearchInput2, onSearch, onType }) {
 
@@ -23,7 +24,7 @@ function Header({ searchInput, searchInput2, setSearchInput, setSearchInput2, on
     <>
       <Navbar expand="lg" bg='dark' data-bs-theme="dark">
       <Container fluid>
-        <Navbar.Brand href="#">Zeelo React page</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/react">Zeelo React page</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
@@ -31,11 +32,11 @@ function Header({ searchInput, searchInput2, setSearchInput, setSearchInput2, on
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
-            <Nav.Link href="#action1">Home</Nav.Link>
+            <Nav.Link as={Link} to="/react">Home</Nav.Link>
             <Nav.Link href="https://voltacores.com/">^Angular-APP</Nav.Link>
             <NavDropdown title="መመዝገቢያ ቦታ" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#action3">Otehr Pages</NavDropdown.Item>
-              <NavDropdown.Item href="#action4">
+              <NavDropdown.Item as={Link} to="/register">
                 Register
               </NavDropdown.Item>
               <NavDropdown.Divider />

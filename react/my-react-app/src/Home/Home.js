@@ -63,6 +63,7 @@ function Home({ setAppData, setFilteredData, filteredData }) {
       <Table striped bordered hover>
         <thead>
           <tr>
+            <th>ID</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Age</th>
@@ -74,6 +75,7 @@ function Home({ setAppData, setFilteredData, filteredData }) {
         <tbody>
           {filteredData.map((item, index) => (
             <tr key={index}>
+              <td>{item.id}</td>
               <td>{item.firstName}</td>
               <td>{item.lastName}</td>
               <td>{item.age}</td>

@@ -1,117 +1,90 @@
-import { routes } from './app.routes';
-import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
-import { EmployeeService } from './EmployeeService';
-import { ChangeDetectorRef } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { AppDialog } from './dialog/app.dialog.component';
-import { Router, NavigationEnd } from '@angular/router';
 import { Employee } from './Employee';
-import { RegisterComponent } from "./register/register/register.component";
+import { EmployeeService } from './EmployeeService';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RegisterComponent } from './register/register/register.component';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
-  standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, NgFor, NgIf, MatDialogModule, MatButtonModule, RouterModule, NgClass, RegisterComponent],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RegisterComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  title = 'Employee Data';
+onCancel() {
+    this.showRegistration = false;
+}
+  title = 'Employee Table';
   data: Employee[] = [];
-
-  employee: any;
-  dialogRef: any; // Track the open dialog reference
-  showMainLayout= true;
-
-  constructor(private router: Router, private employeeService: EmployeeService, private cdr: ChangeDetectorRef, private dialog: MatDialog) {
-    router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.showMainLayout = !event.urlAfterRedirects.startsWith('/contact');
-      }
-    });
-  }
-
   showRegistration = false;
 
-  onRegistered() {
-    console.log('false');
-    this.showRegistration = false;
-    this.router.navigate(['/']);
-    }
+  currentPage = 1;
+  pageSize = 5;
+
+  constructor(private employeeService: EmployeeService) {}
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData(): void {
     this.employeeService.getEmployees().subscribe({
-      next: (d) => {
-        this.data = d;
-        this.data = [... this.data].reverse();
+      next: (res) => {
+        this.data = [...res].reverse(); // ✅ newest first
+        // Optionally jump to first page on new data
+        this.currentPage = 1;
       },
-      error: (error) => {
-        console.error('There was an error!', error);
+      error: (err) => {
+        console.error('Error loading employees:', err);
       },
     });
   }
-
-  currentPage = 1;
-itemsPerPage = 5;
-
-paginatedData() {
-  const start = (this.currentPage - 1) * this.itemsPerPage;
-  return this.data.slice(start, start + this.itemsPerPage);
+ // Calculate total pages
+ get totalPages(): number {
+  return Math.ceil(this.data.length / this.pageSize);
 }
+  // 🧮 Pagination logic
+  paginatedData(): Employee[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.data.slice(startIndex, startIndex + this.pageSize);
+  }
 
-totalPagesArray() {
-  return Array(Math.ceil(this.data.length / this.itemsPerPage))
-    .fill(0)
-    .map((_, i) => i + 1);
-}
+  totalPagesArray(): number[] {
+    return Array(Math.ceil(this.data.length / this.pageSize))
+      .fill(0)
+      .map((_, i) => i + 1);
+  }
 
-get totalPages() {
-  return Math.ceil(this.data.length / this.itemsPerPage);
-}
-
-goToPage(page: number) {
-  this.currentPage = page;
-}
-
-prevPage() {
-  if (this.currentPage > 1) this.currentPage--;
-}
-
-nextPage() {
-  if (this.currentPage < this.totalPages) this.currentPage++;
-}
-
-  btAction: any = "";
-
-  onAction(item: any) {
-    // Prevent opening a new dialog if one is already open
-    if (this.dialogRef) {
-      return;
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
     }
-
-    const btAction = item.isProcessComplete;
-
-    this.dialogRef = this.dialog.open(AppDialog, {
-      width: '400px',
-      height: 'auto',
-      hasBackdrop: true,
-      disableClose: true,
-      backdropClass: 'mat-dialog-backdrop',
-      data: {item, btAction},
-    });
-
-    this.dialogRef.afterClosed().subscribe(() => {
-      this.dialogRef = null; // Reset when dialog is closed
-    });
-
-    // Manually trigger change detection
-    this.cdr.detectChanges();
   }
 
-  trackByIndex(index: number, item: any) {
+  nextPage(): void {
+    if (this.currentPage < this.totalPagesArray().length) {
+      this.currentPage++;
+    }
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+  }
+
+  onRegistered(): void {
+    this.showRegistration = false;
+    this.loadData(); // ✅ Reload data after registration
+  }
+
+  onAction(item: Employee): void {
+    // Placeholder for Withdraw / Re-authorize action logic
+    console.log('Action on', item);
+  }
+
+  trackByIndex(index: number, item: Employee): number {
     return index;
   }
 }

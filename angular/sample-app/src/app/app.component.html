@@ -93,6 +93,6 @@
     </div>
   </div>
 
-  <app-register *ngIf="showRegistration" (registered)="onRegistered()"></app-register>
+  <app-register *ngIf="showRegistration" (cancel)="onCancel()" (registered)="onRegistered()"></app-register>
   <router-outlet></router-outlet>
 </main>

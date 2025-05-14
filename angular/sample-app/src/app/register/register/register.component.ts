@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { EmployeeService } from '../../EmployeeService';
 import { Employee } from '../../Employee';
 import { FormsModule } from '@angular/forms';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent implements OnInit {
+
   @Output() registered = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   constructor (private employeeService: EmployeeService) {}
   employee: Employee = new Employee('', '', '', 0, '', 0, false);
@@ -28,6 +31,11 @@ export class RegisterComponent implements OnInit {
   }
 
   submitForm() {
+    if (!this.employee.firstName || !this.employee.lastName || !this.employee.department) {
+      console.error('Please fill in all required fields.');
+      return;
+    }
+
     console.log('Form submitted');
     this.employeeService.insertEmployees(this.employee).subscribe({
       next: (response) => {
@@ -40,4 +48,8 @@ export class RegisterComponent implements OnInit {
 
     this.registered.emit();
   }
+
+  onCancel() {
+    this.cancel.emit();
+    }
 }

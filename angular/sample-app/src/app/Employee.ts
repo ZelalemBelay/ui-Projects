@@ -1,12 +1,12 @@
 export class Employee{
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   age: number;
   department: string;
   isProcessComplete: boolean;
 
-  constructor(id: number, firstName: string,  lastName: string, age: number, department: string, salary: number, isProcessComplete: boolean) {
+  constructor(id: string, firstName: string,  lastName: string, age: number, department: string, salary: number, isProcessComplete: boolean) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;

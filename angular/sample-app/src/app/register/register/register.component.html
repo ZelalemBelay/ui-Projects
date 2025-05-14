@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="form-wrapper">
+    <form class="registration-form" (ngSubmit)="submitForm()" #formRef="ngForm">
+      <h2>Employee Registration</h2>
+
+      <div class="form-group">
+        <label for="ids">ID</label>
+        <input name="id" id="ids" type="text"  placeholder="{{this.employee.id}}" required readonly />
+      </div>
+
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input name="firstName" id="firstName" type="text" [(ngModel)]="employee.firstName" placeholder="John" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="age">First Name</label>
+        <input name="age" id="age" type="number" [(ngModel)]="employee.age" placeholder="0" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input name="lastName" id="lastName" type="text"  [(ngModel)]="employee.lastName"  placeholder="Doe" required />
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department</label>
+        <select name="department" id="department" [(ngModel)]="employee.department" required>
+          <option value="">Select</option>
+          <option>Engineering</option>
+          <option>Marketing</option>
+          <option>Sales</option>
+          <option>HR</option>
+        </select>
+      </div>
+      <button type="submit" class="submit-btn">Register</button>
+    </form>
+  </div>
+</body>
+</html>

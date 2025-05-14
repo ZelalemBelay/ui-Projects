@@ -9,11 +9,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { AppDialog } from './dialog/app.dialog.component';
 import { Router, NavigationEnd } from '@angular/router';
 import { Employee } from './Employee';
+import { RegisterComponent } from "./register/register/register.component";
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, NgFor, NgIf, MatDialogModule, MatButtonModule, RouterModule, NgClass],
+  imports: [RouterOutlet, NgFor, NgIf, MatDialogModule, MatButtonModule, RouterModule, NgClass, RegisterComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -33,10 +34,19 @@ export class AppComponent implements OnInit {
     });
   }
 
+  showRegistration = false;
+
+  onRegistered() {
+    console.log('false');
+    this.showRegistration = false;
+    this.router.navigate(['/']);
+    }
+
   ngOnInit(): void {
     this.employeeService.getEmployees().subscribe({
       next: (d) => {
         this.data = d;
+        this.data = [... this.data].reverse();
       },
       error: (error) => {
         console.error('There was an error!', error);

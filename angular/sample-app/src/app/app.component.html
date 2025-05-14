@@ -39,7 +39,7 @@
     <nav class="d-flex gap-4 flex-wrap">
       <a href="#" class="link-dark text-decoration-none nav-anim">🏠 Home</a>
       <a href="https://voltacores.com/react" class="link-warning text-decoration-none nav-anim">React-APP</a>
-      <a href="#" class="link-dark text-decoration-none nav-anim">Services</a>
+      <a (click)="showRegistration=true" class="link-dark text-decoration-none nav-anim">Register</a>
       <a routerLink="/contact" class="link-dark text-decoration-none nav-anim">Contact</a>
       <a href="#" class="btn btn-outline-dark">👤 Profile</a>
     </nav>
@@ -87,21 +87,21 @@
     <div class="d-flex justify-content-center mt-4">
       <ul class="pagination pagination-lg glass-bg rounded-4 px-3">
         <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link bg-transparent border-0 text-light" (click)="prevPage()">«</a>
+          <a class="page-link bg-transparent border-0 text-black" (click)="prevPage()">«</a>
         </li>
         <li
           *ngFor="let page of totalPagesArray()"
           class="page-item"
           [class.active]="page === currentPage"
         >
-          <a class="page-link bg-transparent border-0 text-light fw-bold" (click)="goToPage(page)">{{ page }}</a>
+          <a class="page-link bg-transparent border-0 text-black fw-bold" (click)="goToPage(page)">{{ page }}</a>
         </li>
         <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <a class="page-link bg-transparent border-0 text-light" (click)="nextPage()">»</a>
+          <a class="page-link bg-transparent border-0 text-black" (click)="nextPage()">»</a>
         </li>
       </ul>
     </div>
   </div>
-
+   <app-register *ngIf="showRegistration" (registered)="onRegistered()"></app-register>
   <router-outlet></router-outlet>
 </main>

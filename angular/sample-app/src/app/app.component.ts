@@ -1,5 +1,5 @@
 import { routes } from './app.routes';
-import { NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { EmployeeService } from './EmployeeService';
@@ -8,19 +8,18 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { AppDialog } from './dialog/app.dialog.component';
 import { Router, NavigationEnd } from '@angular/router';
+import { Employee } from './Employee';
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, NgFor, NgIf, MatDialogModule, MatButtonModule, RouterModule],
+  imports: [RouterOutlet, NgFor, NgIf, MatDialogModule, MatButtonModule, RouterModule, NgClass],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
   title = 'Employee Data';
-  data = [
-    { firstName: 'John', lastName: 'Doe', age: 30, department: 'IT', isProcessComplete: false },
-  ];
+  data: Employee[] = [];
 
   employee: any;
   dialogRef: any; // Track the open dialog reference
@@ -44,6 +43,36 @@ export class AppComponent implements OnInit {
       },
     });
   }
+
+  currentPage = 1;
+itemsPerPage = 5;
+
+paginatedData() {
+  const start = (this.currentPage - 1) * this.itemsPerPage;
+  return this.data.slice(start, start + this.itemsPerPage);
+}
+
+totalPagesArray() {
+  return Array(Math.ceil(this.data.length / this.itemsPerPage))
+    .fill(0)
+    .map((_, i) => i + 1);
+}
+
+get totalPages() {
+  return Math.ceil(this.data.length / this.itemsPerPage);
+}
+
+goToPage(page: number) {
+  this.currentPage = page;
+}
+
+prevPage() {
+  if (this.currentPage > 1) this.currentPage--;
+}
+
+nextPage() {
+  if (this.currentPage < this.totalPages) this.currentPage++;
+}
 
   btAction: any = "";
 

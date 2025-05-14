@@ -15,7 +15,7 @@ function Registration() {
     fetch('https://www.voltacores.com/api/getData')
       .then((res) => res.json())
       .then((data) => {
-        const nextId = `E${data.length}`;
+        const nextId = `E${parseInt(data.length+1)}`;
 
         setEmployee((prev) => ({
           ...prev,

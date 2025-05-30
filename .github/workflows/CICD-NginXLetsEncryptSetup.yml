@@ -41,57 +41,60 @@ jobs:
 
       - name: Setup NGINX & HTTPS on Remote AWS EC2
         run: |
-          ssh ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << EOF
-          set -e
+          ssh ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << 'EOF'
+            set -e
 
-          DOMAIN="voltacores.com"
-          EMAIL="zeelosoft@gmail.com"
+            DOMAIN="voltacores.com"
+            EMAIL="zeelosoft@gmail.com"
 
-          echo "🔧 Updating system and installing NGINX..."
-          sudo yum update -y
-          sudo dnf install -y nginx
+            echo "🔧 Updating system and installing NGINX..."
+            sudo yum update -y
+            sudo dnf install -y nginx
 
-          echo "🚀 Starting NGINX..."
-          sudo systemctl enable nginx
-          sudo systemctl start nginx
+            echo "🚀 Starting NGINX..."
+            sudo systemctl enable nginx
+            sudo systemctl start nginx
 
-          echo "🌐 Installing Certbot..."
-          sudo yum install -y certbot python3-certbot-nginx
+            echo "🌐 Installing Certbot..."
+            sudo yum install -y certbot python3-certbot-nginx
 
-          echo "📝 Writing NGINX reverse proxy config..."
-          sudo bash -c "cat > /etc/nginx/conf.d/angular.conf" <<EOL
-          server {
-              listen 80;
-              server_name voltacores.com;
-              return 301 https://\$host\$request_uri;
-          }
+            echo "📝 Writing NGINX reverse proxy config..."
+            EOF
 
-          server {
-              listen 443 ssl;
-              server_name voltacores.com;
+                      cat <<'CONF' | ssh ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} "sudo tee /etc/nginx/conf.d/angular.conf > /dev/null"
+            server {
+                listen 80;
+                server_name voltacores.com;
+                return 301 https://\$host\$request_uri;
+            }
 
-              ssl_certificate /etc/letsencrypt/live/voltacores.com/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/voltacores.com/privkey.pem;
+            server {
+                listen 443 ssl;
+                server_name voltacores.com;
 
-              location / {
-                  proxy_pass http://localhost:4200;
-                  proxy_http_version 1.1;
-                  proxy_set_header Upgrade \$http_upgrade;
-                  proxy_set_header Connection \"upgrade\";
-                  proxy_set_header Host \$host;
-                  proxy_cache_bypass \$http_upgrade;
-              }
-          }
-          EOL
+                ssl_certificate /etc/letsencrypt/live/voltacores.com/fullchain.pem;
+                ssl_certificate_key /etc/letsencrypt/live/voltacores.com/privkey.pem;
 
-                    echo "🔍 Testing NGINX config..."
-                    sudo nginx -t && sudo systemctl reload nginx
+                location / {
+                    proxy_pass http://localhost:4200;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade \$http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_set_header Host \$host;
+                    proxy_cache_bypass \$http_upgrade;
+                }
+            }
+            CONF
 
-                    echo "🔒 Requesting SSL certificate from Let's Encrypt..."
-                    sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d voltacores.com
+                      ssh ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << 'EOF'
+                        echo "🔍 Testing NGINX config..."
+                        sudo nginx -t && sudo systemctl reload nginx
 
-                    echo "🔁 Reloading NGINX with SSL..."
-                    sudo systemctl reload nginx
+                        echo "🔒 Requesting SSL certificate from Let's Encrypt..."
+                        sudo certbot --nginx --non-interactive --agree-tos -m $EMAIL -d $DOMAIN
 
-                    echo "✅ HTTPS setup complete at https://voltacores.com"
-                    EOF
+                        echo "🔁 Reloading NGINX with SSL..."
+                        sudo systemctl reload nginx
+
+                        echo "✅ HTTPS setup complete at https://$DOMAIN"
+            EOF

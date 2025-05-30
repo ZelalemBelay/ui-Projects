@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/.github/workflows/CICD-NginXLetsEncryptSetup.yml'
+      - '.github/workflows/CICD-NginXLetsEncryptSetup.yml'
 
 jobs:
   deploy-and-setup-https:

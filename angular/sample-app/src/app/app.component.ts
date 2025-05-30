@@ -1,3 +1,4 @@
+import { EmployeeServiceAWS } from './EmployeeServiceAWS';
 import { Component, OnInit } from '@angular/core';
 import { Employee } from './Employee';
 import { EmployeeService } from './EmployeeService';
@@ -24,14 +25,14 @@ onCancel() {
   currentPage = 1;
   pageSize = 5;
 
-  constructor(private employeeService: EmployeeService) {}
+  constructor(private employeeService: EmployeeService, private employeeServiceAWS: EmployeeServiceAWS) {}
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    this.employeeService.getEmployees().subscribe({
+    this.employeeServiceAWS.getEmployees().subscribe({
       next: (res) => {
         this.data = [...res].reverse(); // ✅ newest first
         // Optionally jump to first page on new data

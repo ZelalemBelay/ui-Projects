@@ -7,7 +7,7 @@ import { Employee } from './Employee';
   providedIn: 'root'
 })
 export class EmployeeServiceAWS {
-  private apiUrl = 'https://www.voltacores.com/api/getData';
+  private apiUrl = 'https://jxtlk7s0q8.execute-api.us-east-2.amazonaws.com/stage';
 
   constructor(private http: HttpClient) { }
 

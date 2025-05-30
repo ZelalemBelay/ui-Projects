@@ -13,8 +13,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << 'EOF'
           set -e
 
-          DOMAIN="voltacores.com"  # Replace this
-          EMAIL="zeelosoft@gmail.com"  # Replace this
+          DOMAIN="voltacores.com"
+          EMAIL="zeelosoft@gmail.com"
 
           echo "🔧 Updating system and installing NGINX..."
           sudo yum update -y
@@ -27,12 +27,20 @@ jobs:
           echo "🌐 Installing Certbot..."
           sudo yum install -y certbot python3-certbot-nginx
 
-          echo "📝 Configuring NGINX reverse proxy..."
+          echo "📝 Writing NGINX reverse proxy config..."
           sudo tee /etc/nginx/conf.d/angular.conf > /dev/null <<EOL
           server {
               listen 80;
               server_name \$DOMAIN;
-              return 301 https://$host$request_uri;
+              return 301 https://\$host\$request_uri;
+          }
+
+          server {
+              listen 443 ssl;
+              server_name \$DOMAIN;
+
+              ssl_certificate /etc/letsencrypt/live/\$DOMAIN/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/\$DOMAIN/privkey.pem;
 
               location / {
                   proxy_pass http://localhost:4200;

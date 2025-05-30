@@ -5,8 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'angular/sample-app/**'
-      - '.github/workflows/CICD-Angular-AWS.yml'
+      - '.github/workflows/.github/workflows/CICD-NginXLetsEncryptSetup.yml'
 
 jobs:
   deploy-and-setup-https:
@@ -89,7 +88,7 @@ jobs:
                     sudo nginx -t && sudo systemctl reload nginx
 
                     echo "🔒 Requesting SSL certificate from Let's Encrypt..."
-                    sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \voltacores.com
+                    sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d voltacores.com
 
                     echo "🔁 Reloading NGINX with SSL..."
                     sudo systemctl reload nginx

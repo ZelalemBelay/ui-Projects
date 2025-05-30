@@ -25,7 +25,7 @@ jobs:
 
           echo "🔧 Updating system and installing NGINX..."
           sudo yum update -y
-          sudo amazon-linux-extras install nginx1 -y
+          sudo dnf install -y nginx
 
           echo "🚀 Starting NGINX..."
           sudo systemctl enable nginx

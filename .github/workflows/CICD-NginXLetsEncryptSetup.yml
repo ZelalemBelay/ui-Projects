@@ -1,13 +1,21 @@
-name: Setup HTTPS ON AWS-EC2 Remote Docker Host
+name: Deploy Angular App and Setup HTTPS on AWS EC2
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'angular/sample-app/**'
+      - '.github/workflows/CICD-Angular-AWS.yml'
 
 jobs:
-  setup-nginx-https:
+  deploy-and-setup-https:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
@@ -15,27 +23,42 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
+      - name: Build Docker image
+        run: docker build -t angular-app ./angular/sample-app
+
+      - name: Save Docker image to tar
+        run: docker save angular-app -o angular-app.tar
+
+      - name: Copy image to remote server
+        run: scp angular-app.tar ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }}:/tmp/
+
+      - name: Load Docker image & run container on remote server
+        run: |
+          ssh ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << EOF
+            docker load -i /tmp/angular-app.tar
+            docker stop angular-app || true && docker rm angular-app || true
+            docker run -d --name angular-app -p 4200:80 angular-app
+          EOF
+
       - name: Setup NGINX & HTTPS on Remote AWS EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} <<EOF
+          ssh ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << EOF
           set -e
-        
+
           DOMAIN="voltacores.com"
           EMAIL="zeelosoft@gmail.com"
-        
-          export DOMAIN EMAIL
-        
+
           echo "🔧 Updating system and installing NGINX..."
           sudo yum update -y
           sudo dnf install -y nginx
-        
+
           echo "🚀 Starting NGINX..."
           sudo systemctl enable nginx
-           sudo systemctl start nginx
-        
+          sudo systemctl start nginx
+
           echo "🌐 Installing Certbot..."
           sudo yum install -y certbot python3-certbot-nginx
-          
+
           echo "📝 Writing NGINX reverse proxy config..."
           sudo bash -c "cat > /etc/nginx/conf.d/angular.conf" <<EOL
           server {
@@ -43,33 +66,33 @@ jobs:
               server_name ${DOMAIN};
               return 301 https://\$host\$request_uri;
           }
-          
+
           server {
               listen 443 ssl;
               server_name ${DOMAIN};
-          
-            ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-            ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
-        
-            location / {
-                proxy_pass http://localhost:4200;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade \$http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host \$host;
-                proxy_cache_bypass \$http_upgrade;
-            }
+
+              ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+
+              location / {
+                  proxy_pass http://localhost:4200;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade \$http_upgrade;
+                  proxy_set_header Connection 'upgrade';
+                  proxy_set_header Host \$host;
+                  proxy_cache_bypass \$http_upgrade;
+              }
           }
           EOL
-          
-          echo "🔍 Testing NGINX config..."
-          sudo nginx -t && sudo systemctl reload nginx
-          
-          echo "🔒 Requesting SSL certificate from Let's Encrypt..."
-          sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \$DOMAIN
-          
-          echo "🔁 Reloading NGINX with SSL..."
-          sudo systemctl reload nginx
-          
-          echo "✅ HTTPS setup complete at https://\$DOMAIN"
-          EOF
+
+                    echo "🔍 Testing NGINX config..."
+                    sudo nginx -t && sudo systemctl reload nginx
+
+                    echo "🔒 Requesting SSL certificate from Let's Encrypt..."
+                    sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \$DOMAIN
+
+                    echo "🔁 Reloading NGINX with SSL..."
+                    sudo systemctl reload nginx
+
+                    echo "✅ HTTPS setup complete at https://\$DOMAIN"
+                    EOF

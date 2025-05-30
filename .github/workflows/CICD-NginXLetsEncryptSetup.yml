@@ -19,55 +19,57 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} <<EOF
           set -e
-
+        
           DOMAIN="voltacores.com"
           EMAIL="zeelosoft@gmail.com"
-
+        
+          export DOMAIN EMAIL
+        
           echo "🔧 Updating system and installing NGINX..."
           sudo yum update -y
           sudo dnf install -y nginx
-
+        
           echo "🚀 Starting NGINX..."
           sudo systemctl enable nginx
-          sudo systemctl start nginx
-
+           sudo systemctl start nginx
+        
           echo "🌐 Installing Certbot..."
           sudo yum install -y certbot python3-certbot-nginx
-
+          
           echo "📝 Writing NGINX reverse proxy config..."
-          sudo tee /etc/nginx/conf.d/angular.conf > /dev/null <<EOL
+          sudo bash -c "cat > /etc/nginx/conf.d/angular.conf" <<EOL
           server {
               listen 80;
               server_name ${DOMAIN};
               return 301 https://\$host\$request_uri;
           }
-
+          
           server {
               listen 443 ssl;
               server_name ${DOMAIN};
-
-              ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
-
-              location / {
-                  proxy_pass http://localhost:4200;
-                  proxy_http_version 1.1;
-                  proxy_set_header Upgrade \$http_upgrade;
-                  proxy_set_header Connection 'upgrade';
-                  proxy_set_header Host \$host;
-                  proxy_cache_bypass \$http_upgrade;
-              }
+          
+            ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+        
+            location / {
+                proxy_pass http://localhost:4200;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade \$http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host \$host;
+                proxy_cache_bypass \$http_upgrade;
+            }
           }
           EOL
-
+          
           echo "🔍 Testing NGINX config..."
           sudo nginx -t && sudo systemctl reload nginx
-
+          
           echo "🔒 Requesting SSL certificate from Let's Encrypt..."
           sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \$DOMAIN
-
+          
           echo "🔁 Reloading NGINX with SSL..."
           sudo systemctl reload nginx
-
+          
           echo "✅ HTTPS setup complete at https://\$DOMAIN"
           EOF

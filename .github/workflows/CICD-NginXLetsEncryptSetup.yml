@@ -1,0 +1,58 @@
+name: Setup HTTPS ON AWS-EC2 Remote Docker Host
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-nginx-https:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup NGINX & HTTPS on Remote AWS EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << 'EOF'
+          set -e
+
+          DOMAIN="voltacores.com"  # Replace this
+          EMAIL="zeelosoft@gmail.com"  # Replace this
+
+          echo "🔧 Updating system and installing NGINX..."
+          sudo yum update -y
+          sudo amazon-linux-extras install nginx1 -y
+
+          echo "🚀 Starting NGINX..."
+          sudo systemctl enable nginx
+          sudo systemctl start nginx
+
+          echo "🌐 Installing Certbot..."
+          sudo yum install -y certbot python3-certbot-nginx
+
+          echo "📝 Configuring NGINX reverse proxy..."
+          sudo tee /etc/nginx/conf.d/angular.conf > /dev/null <<EOL
+          server {
+              listen 80;
+              server_name \$DOMAIN;
+              return 301 https://$host$request_uri;
+
+              location / {
+                  proxy_pass http://localhost:4200;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade \$http_upgrade;
+                  proxy_set_header Connection 'upgrade';
+                  proxy_set_header Host \$host;
+                  proxy_cache_bypass \$http_upgrade;
+              }
+          }
+          EOL
+
+          echo "🔍 Testing NGINX config..."
+          sudo nginx -t && sudo systemctl reload nginx
+
+          echo "🔒 Requesting SSL certificate from Let's Encrypt..."
+          sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \$DOMAIN
+
+          echo "🔁 Reloading NGINX with SSL..."
+          sudo systemctl reload nginx
+
+          echo "✅ HTTPS setup complete at https://\$DOMAIN"
+          EOF

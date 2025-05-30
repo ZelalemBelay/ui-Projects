@@ -17,7 +17,7 @@ jobs:
 
       - name: Setup NGINX & HTTPS on Remote AWS EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_REMOTE_USER }}@${{ secrets.AWS_REMOTE_HOST }} <<EOF
           set -e
 
           DOMAIN="voltacores.com"
@@ -38,16 +38,16 @@ jobs:
           sudo tee /etc/nginx/conf.d/angular.conf > /dev/null <<EOL
           server {
               listen 80;
-              server_name \$DOMAIN;
+              server_name ${DOMAIN};
               return 301 https://\$host\$request_uri;
           }
 
           server {
               listen 443 ssl;
-              server_name \$DOMAIN;
+              server_name ${DOMAIN};
 
-              ssl_certificate /etc/letsencrypt/live/\$DOMAIN/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/\$DOMAIN/privkey.pem;
+              ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
 
               location / {
                   proxy_pass http://localhost:4200;

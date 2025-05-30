@@ -63,16 +63,16 @@ jobs:
           sudo bash -c "cat > /etc/nginx/conf.d/angular.conf" <<EOL
           server {
               listen 80;
-              server_name ${DOMAIN};
+              server_name voltacores.com;
               return 301 https://\$host\$request_uri;
           }
 
           server {
               listen 443 ssl;
-              server_name ${DOMAIN};
+              server_name voltacores.com;
 
-              ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+              ssl_certificate /etc/letsencrypt/live/voltacores.com/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/voltacores.com/privkey.pem;
 
               location / {
                   proxy_pass http://localhost:4200;
@@ -89,10 +89,10 @@ jobs:
                     sudo nginx -t && sudo systemctl reload nginx
 
                     echo "🔒 Requesting SSL certificate from Let's Encrypt..."
-                    sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \$DOMAIN
+                    sudo certbot --nginx --non-interactive --agree-tos -m \$EMAIL -d \voltacores.com
 
                     echo "🔁 Reloading NGINX with SSL..."
                     sudo systemctl reload nginx
 
-                    echo "✅ HTTPS setup complete at https://\$DOMAIN"
+                    echo "✅ HTTPS setup complete at https://voltacores.com"
                     EOF

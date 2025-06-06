@@ -1,7 +1,7 @@
 version: '3'
 services:
   angular:
-    build: ../sample-app
+    build: ../
     container_name: angular_app
     restart: always
     networks:

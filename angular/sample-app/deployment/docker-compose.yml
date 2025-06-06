@@ -1,0 +1,42 @@
+version: '3'
+services:
+  angular:
+    build: ../sample-app
+    container_name: angular_app
+    restart: always
+    networks:
+      - web
+    environment:
+      - DOMAIN=${DOMAIN}
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - angular
+    networks:
+      - web
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: >
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot
+             --email ${EMAIL} --agree-tos --no-eff-email
+             -d ${DOMAIN} && nginx -s reload"
+    depends_on:
+      - nginx
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge

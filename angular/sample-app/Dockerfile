@@ -17,7 +17,7 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Copy Angular build files to nginx public directory
 COPY --from=build /app/dist/sample-app/browser /usr/share/nginx/html
-COPY ../nginx/angular.conf.template /etc/nginx/conf.d/default.conf
+# COPY ../nginx/angular.conf.template /etc/nginx/conf.d/default.conf
 
 # Optional: Expose port
 EXPOSE 80

@@ -15,14 +15,13 @@ services:
   nginx:
     image: nginx:alpine
     volumes:
+      - ../../sample-app/dist:/usr/share/nginx/html:ro
       - ./nginx:/etc/nginx/conf.d
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - angular
     networks:
       - web
 

@@ -31,8 +31,7 @@ services:
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
     entrypoint: >
-      sh -c "certonly --webroot --webroot-path=/var/www/certbot --email ${EMAIL} --agree-tos --non-interactive -d ${DOMAIN}
-             -d ${DOMAIN} && nginx -s reload"
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email ${EMAIL} --agree-tos --non-interactive -d ${DOMAIN}"
     depends_on:
       - nginx
     networks:

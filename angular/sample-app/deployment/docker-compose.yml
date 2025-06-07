@@ -1,16 +1,16 @@
 version: '3.8'
 services:
-  angular:
-    build:
-      context: ../../sample-app
-      dockerfile: deployment/certbot/Dockerfile
+  # angular:
+  #   build:
+  #     context: ../../sample-app
+  #     dockerfile: deployment/certbot/Dockerfile
 
-    container_name: angular_app
-    restart: always
-    networks:
-      - web
-    environment:
-      - DOMAIN=${DOMAIN}
+  #   container_name: angular_app
+  #   restart: always
+  #   networks:
+  #     - web
+  #   environment:
+  #     - DOMAIN=${DOMAIN}
 
   nginx:
     image: nginx:alpine

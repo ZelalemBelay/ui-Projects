@@ -2,8 +2,8 @@ version: '3.8'
 services:
   angular:
     build:
-      context: ../..
-      dockerfile: angular/sample-app/deployment/certbot/Dockerfile
+      context: ../../sample-app
+      dockerfile: deployment/certbot/Dockerfile
 
     container_name: angular_app
     restart: always

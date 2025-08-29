@@ -87,7 +87,7 @@ export default function App() {
 
     setSubmissionStatus('sending'); // Set status to indicate sending
 
-    const apiUrl = 'https://voltacores.com/mailApi';
+    const apiUrl = 'https://bf52bca7012e.ngrok-free.api/mailApi';
     const formData = {
       name: name,
       email: email,
@@ -181,7 +181,7 @@ export default function App() {
           <div className="md:w-1/2 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700] to-[#DAA520] rounded-3xl transform rotate-3 scale-105 opacity-20 blur-xl"></div>
             <img
-              src="/public/house.png"
+              src="/house.png"
               alt="Voltacores office interior"
               className="relative rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-500 ease-in-out"
             />

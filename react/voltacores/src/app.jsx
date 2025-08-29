@@ -87,7 +87,7 @@ export default function App() {
 
     setSubmissionStatus('sending'); // Set status to indicate sending
 
-    const apiUrl = 'https://bf52bca7012e.ngrok-free.api/mailApi';
+    const apiUrl = 'https://bf52bca7012e.ngrok-free.app/mailApi';
     const formData = {
       name: name,
       email: email,
